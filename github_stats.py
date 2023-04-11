@@ -77,8 +77,7 @@ class Queries(object):
                                                headers=headers,
                                                params=tuple(params.items()))
                 if r.status == 202:
-                    # print(f"{path} returned 202. Retrying...")
-                    print(f"A path returned 202. Retrying...")
+                    print(f"{path} returned 202. Retrying...")
                     await asyncio.sleep(2)
                     continue
 
@@ -86,20 +85,19 @@ class Queries(object):
                 if result is not None:
                     return result
             except:
-                print("aiohttp failed for rest query")
+                print(f"Session request failed for rest query {path}")
                 # Fall back on non-async requests
                 async with self.semaphore:
                     r = requests.get(f"https://api.github.com/{path}",
                                      headers=headers,
                                      params=tuple(params.items()))
                     if r.status_code == 202:
-                        print(f"A path returned 202. Retrying...")
+                        print(f"Returned 202 on {path}. Retrying...")
                         await asyncio.sleep(2)
                         continue
                     elif r.status_code == 200:
                         return r.json()
-        # print(f"There were too many 202s. Data for {path} will be incomplete.")
-        print("There were too many 202s. Data for this repository will be incomplete.")
+        print(f"There were too many 202s. Data for {path} will be incomplete.")
         return dict()
 
     @staticmethod
